@@ -1,0 +1,38 @@
+:root{
+  --bg:#f6f8fb; --card:#ffffff; --muted:#6b7280; --accent:#2563eb;
+  --radius:10px; --max-width:1100px;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; font-family:Inter,system-ui,Segoe UI,Roboto,Arial; background:var(--bg); color:#0f172a;
+  -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+}
+.container{max-width:var(--max-width); margin:1.25rem auto; padding:1rem}
+.site-header{background:linear-gradient(90deg,#0ea5e9 0%,#6366f1 100%); color:#fff}
+.header-inner{display:flex;align-items:center;justify-content:space-between;padding:0.9rem 1rem}
+.brand{font-weight:700;color:#fff;text-decoration:none;font-size:1.15rem}
+.nav{display:flex;gap:0.5rem}
+.nav-link{color:rgba(255,255,255,0.95);text-decoration:none;padding:0.35rem 0.6rem;border-radius:8px;font-weight:600;background:rgba(255,255,255,0.06)}
+.nav-link:hover{background:rgba(255,255,255,0.12)}
+
+.grid{display:grid;grid-template-columns:1fr 320px;gap:1rem}
+@media (max-width:880px){ .grid{grid-template-columns:1fr} .side-card{order:2} }
+
+.card{background:var(--card);padding:1rem;border-radius:var(--radius);box-shadow:0 6px 18px rgba(12,21,36,0.06)}
+.main-card{min-height:220px}
+.side-card{min-height:120px}
+.card-title{margin:0 0 0.5rem 0;font-size:1.25rem}
+.muted{color:var(--muted);font-size:0.95rem;margin:0.5rem 0}
+
+.cards{display:flex;gap:0.8rem;flex-wrap:wrap;margin-top:0.8rem}
+.small-card{flex:1 1 200px;background:linear-gradient(180deg,#ffffff,#fbfdff);padding:0.8rem;border-radius:8px;box-shadow:0 4px 10px rgba(12,21,36,0.04)}
+.small-card h4{margin:0 0 0.5rem 0}
+.btn{display:inline-block;margin-top:0.5rem;padding:0.45rem 0.75rem;background:var(--accent);color:#fff;text-decoration:none;border-radius:8px;font-weight:600}
+.btn:hover{opacity:0.95}
+
+.status{margin-top:0.6rem}
+.status-row{display:flex;justify-content:space-between;padding:0.35rem 0;border-bottom:1px dashed #eef2ff;color:var(--muted)}
+.label{font-weight:600}
+.value{font-weight:700;color:#0f172a}
+
+.footer{margin-top:1rem;padding-top:0.6rem;border-top:1px solid rgba(12,21,36,0.04);font-size:0.95rem;color:var(--muted)}

@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="grid grid-cols-2">
+  <!-- Live Charts -->
+  <div class="card">
+    <h3><i class="fas fa-microchip text-primary"></i> CPU Load</h3>
+    <canvas id="cpuChart" height="200"></canvas>
+    <div class="text-center mt-4">
+      <span id="cpuValue" class="text-2xl font-bold">0%</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3><i class="fas fa-memory text-primary"></i> Memory Usage</h3>
+    <canvas id="memoryChart" height="200"></canvas>
+    <div class="text-center mt-4">
+      <span id="memoryValue" class="text-2xl font-bold">0%</span>
+    </div>
+  </div>
+</div>
+
+<div class="grid grid-cols-3 mt-4">
+  <div class="card text-center">
+    <h4 class="text-gray text-sm">Active Processes</h4>
+    <div id="procsValue" class="text-3xl font-bold mt-2">0</div>
+  </div>
+  <div class="card text-center">
+    <h4 class="text-gray text-sm">Avg Burst Time</h4>
+    <div id="burstValue" class="text-3xl font-bold mt-2">0 ms</div>
+  </div>
+  <div class="card text-center">
+    <h4 class="text-gray text-sm">Avg Priority</h4>
+    <div id="priorityValue" class="text-3xl font-bold mt-2">0</div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const ctxCpu = document.getElementById('cpuChart').getContext('2d');
+  const ctxMem = document.getElementById('memoryChart').getContext('2d');
+
+  // Gradient definitions
+  const gradientCpu = ctxCpu.createLinearGradient(0, 0, 0, 400);
+  gradientCpu.addColorStop(0, 'rgba(59, 130, 246, 0.5)');
+  gradientCpu.addColorStop(1, 'rgba(59, 130, 246, 0.0)');
+
+  const gradientMem = ctxMem.createLinearGradient(0, 0, 0, 400);
+  gradientMem.addColorStop(0, 'rgba(139, 92, 246, 0.5)');
+  gradientMem.addColorStop(1, 'rgba(139, 92, 246, 0.0)');
+
+  const commonOptions = {
+    responsive: true,
+    plugins: { legend: { display: false } },
+    scales: {
+      y: { min: 0, max: 100, grid: { color: 'rgba(255,255,255,0.05)' } },
+      x: { display: false }
+    },
+    elements: { point: { radius: 0 } }
+  };
+
+  const cpuChart = new Chart(ctxCpu, {
+    type: 'line',
+    data: {
+      labels: Array(20).fill(''),
+      datasets: [{
+        data: Array(20).fill(0),
+        borderColor: '#3b82f6',
+        backgroundColor: gradientCpu,
+        borderWidth: 2,
+        fill: true,
+        tension: 0.4
+      }]
+    },
+    options: commonOptions
+  });
+
+  const memoryChart = new Chart(ctxMem, {
+    type: 'line',
+    data: {
+      labels: Array(20).fill(''),
+      datasets: [{
+        data: Array(20).fill(0),
+        borderColor: '#8b5cf6',
+        backgroundColor: gradientMem,
+        borderWidth: 2,
+        fill: true,
+        tension: 0.4
+      }]
+    },
+    options: commonOptions
+  });
+
+  function updateStats() {
+    fetch('/live')
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('cpuValue').innerText = data.cpu + '%';
+        document.getElementById('memoryValue').innerText = data.memory + '%';
+        document.getElementById('procsValue').innerText = data.processes;
+        document.getElementById('burstValue').innerText = data.avg_burst_time + ' ms';
+        document.getElementById('priorityValue').innerText = data.avg_priority;
+
+        // Update Charts
+        cpuChart.data.datasets[0].data.push(data.cpu);
+        if (cpuChart.data.datasets[0].data.length > 20) cpuChart.data.datasets[0].data.shift();
+        cpuChart.update('none'); // 'none' for performance
+
+        memoryChart.data.datasets[0].data.push(data.memory);
+        if (memoryChart.data.datasets[0].data.length > 20) memoryChart.data.datasets[0].data.shift();
+        memoryChart.update('none');
+      });
+  }
+
+  setInterval(updateStats, 1000);
+</script>
+{% endblock %}

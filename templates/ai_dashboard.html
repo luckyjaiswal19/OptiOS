@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="grid grid-cols-2">
+  <!-- State Info -->
+  <div class="card">
+    <h3><i class="fas fa-info-circle text-primary"></i> Current System State</h3>
+    <ul class="mt-4" style="list-style: none; padding: 0;">
+      <li class="mb-2 flex justify-between">
+        <span class="text-gray">Ready Queue Size:</span>
+        <span id="rq" class="font-bold">0</span>
+      </li>
+      <li class="mb-2 flex justify-between">
+        <span class="text-gray">Avg Burst Time:</span>
+        <span id="burst" class="font-bold">0 ms</span>
+      </li>
+      <li class="mb-2 flex justify-between">
+        <span class="text-gray">Avg Priority:</span>
+        <span id="prio" class="font-bold">0</span>
+      </li>
+      <li class="mb-2 flex justify-between">
+        <span class="text-gray">Memory Usage:</span>
+        <span id="mem" class="font-bold">0%</span>
+      </li>
+    </ul>
+  </div>
+
+  <!-- RL Agent Decision -->
+  <div class="card text-center flex flex-col justify-center items-center">
+    <h3><i class="fas fa-robot text-accent"></i> RL Agent Choice</h3>
+    <div id="rlChoice" class="text-5xl font-bold mt-4 text-accent transition-all duration-300">
+      Scanning...
+    </div>
+    <div class="text-sm text-gray mt-2">Optimal Scheduling Algorithm</div>
+  </div>
+</div>
+
+<div class="card mt-4">
+  <h3><i class="fas fa-chart-bar text-success"></i> Performance Comparison (Simulation)</h3>
+  <div class="overflow-x-auto mt-4">
+    <table style="width: 100%; border-collapse: collapse;">
+      <thead>
+        <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+          <th class="text-left py-2 text-gray text-sm">Algorithm</th>
+          <th class="text-right py-2 text-gray text-sm">Avg Wait Time</th>
+          <th class="text-right py-2 text-gray text-sm">Avg Turnaround Time</th>
+        </tr>
+      </thead>
+      <tbody id="comparisonTable">
+        <!-- Rows injected by JS -->
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  function updateAI() {
+    fetch('/predict_live')
+      .then(res => res.json())
+      .then(data => {
+        // Update State
+        document.getElementById('rq').innerText = data.state.ready_queue_size;
+        document.getElementById('burst').innerText = data.state.avg_burst_time.toFixed(2);
+        document.getElementById('prio').innerText = data.state.avg_priority.toFixed(2);
+        document.getElementById('mem').innerText = data.state.memory_usage.toFixed(2) + '%';
+
+        // Update RL Choice
+        const choiceEl = document.getElementById('rlChoice');
+        if (choiceEl.innerText !== data.rl_choice) {
+          choiceEl.style.transform = "scale(1.1)";
+          setTimeout(() => choiceEl.style.transform = "scale(1)", 200);
+        }
+        choiceEl.innerText = data.rl_choice;
+
+        // Update Table
+        const tbody = document.getElementById('comparisonTable');
+        tbody.innerHTML = '';
+        data.comparisons.forEach(row => {
+          const isSelected = row.Algorithm === data.rl_choice;
+          const tr = document.createElement('tr');
+          tr.style.borderBottom = "1px solid rgba(255,255,255,0.05)";
+          if (isSelected) {
+            tr.style.backgroundColor = "rgba(16, 185, 129, 0.1)";
+          }
+          tr.innerHTML = `
+                        <td class="py-3 ${isSelected ? 'text-success font-bold' : ''}">
+                            ${row.Algorithm} ${isSelected ? '<i class="fas fa-check-circle ml-2"></i>' : ''}
+                        </td>
+                        <td class="text-right py-3">${row['Average Waiting Time']}</td>
+                        <td class="text-right py-3">${row['Average Turnaround Time']}</td>
+                    `;
+          tbody.appendChild(tr);
+        });
+      });
+  }
+
+  // Update every 2 seconds for AI dashboard
+  setInterval(updateAI, 2000);
+  updateAI();
+</script>
+{% endblock %}
