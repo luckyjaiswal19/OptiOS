@@ -2,8 +2,8 @@
 
 OptiOS is a sophisticated Operative System simulator and real-time monitoring tool powered by Reinforcement Learning. It visualizes CPU scheduling algorithms and demonstrates how an AI agent can optimize system performance dynamically.
 
-![OptiOS Dashboard](https://github.com/luckyjaiswal19/OptiOS/blob/6021be41b555e0f4a5f0b21e04ed0767ac92fe0a/OptiOS_P1.png)
-![OptiOS Dashboard](https://github.com/luckyjaiswal19/OptiOS/blob/ce9d46cab6cf85ed615053bb8d5d4efd85918abc/OptiOS_P2.png)
+![OptiOS Dashboard1](<img width="1470" height="830" alt="OptiOS_P1" src="https://github.com/user-attachments/assets/9a1bcabb-6d76-4942-a107-98284e9bf2cb" />)
+![OptiOS Dashboard2](<img width="1470" height="830" alt="OptiOS_P2" src="https://github.com/user-attachments/assets/92709abb-4e87-44ad-8b33-5e1fcb910f86" />)
 
 ## 🚀 Features
 
